@@ -14,6 +14,8 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class User extends Resource
 {
+    public static $group = 'User Management';
+
     /**
      * The model the resource corresponds to.
      *
