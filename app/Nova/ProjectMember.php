@@ -2,21 +2,23 @@
 
 namespace App\Nova;
 
-use App\Models\Project as ProjectModel;
-use App\Models\User as UserModel;
+use App\Models\ProjectMember as ProjectMemberModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\Gravatar;
-use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\HasManyThrough;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Project extends Resource
+class ProjectMember extends Resource
 {
+    /**
+     * @var bool
+     */
+    public static $displayInNavigation = false;
+
+    /**
+     * @var string
+     */
     public static $group = 'Projects';
 
     /**
@@ -24,14 +26,14 @@ class Project extends Resource
      *
      * @var string
      */
-    public static string $model = ProjectModel::class;
+    public static $model = ProjectMemberModel::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -39,7 +41,7 @@ class Project extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'description'
+        'id',
     ];
 
     /**
@@ -53,16 +55,9 @@ class Project extends Resource
         return [
             ID::make()->sortable()->showOnIndex(false),
 
-            BelongsTo::make('Owner', 'owner', 'App\Nova\User')
-                ->sortable(),
+            BelongsTo::make('Project'),
 
-            Text::make('Name')
-                ->required()
-                ->sortable(),
-
-            Trix::make('Description'),
-
-            HasMany::make('Members', 'members', 'App\Nova\ProjectMember'),
+            BelongsTo::make('User'),
         ];
     }
 
