@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->text('roles')->nullable();
             $table->timestamps();
+
+            $table->unique(['project_id', 'user_id']);
         });
     }
 
