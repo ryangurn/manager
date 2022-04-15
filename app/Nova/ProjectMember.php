@@ -21,7 +21,7 @@ class ProjectMember extends Resource
     /**
      * @var string
      */
-    public static $group = 'Projects';
+    public static $group = 'Project Management';
 
     /**
      * The model the resource corresponds to.

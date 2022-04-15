@@ -17,7 +17,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Project extends Resource
 {
-    public static $group = 'Projects';
+    public static $group = 'Project Management';
 
     /**
      * The model the resource corresponds to.
