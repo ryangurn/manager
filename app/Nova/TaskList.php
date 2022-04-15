@@ -2,20 +2,15 @@
 
 namespace App\Nova;
 
-use App\Models\Project as ProjectModel;
-use App\Models\User as UserModel;
+use App\Models\TaskList as TaskListModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\Gravatar;
-use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Project extends Resource
+class TaskList extends Resource
 {
     public static $group = 'Project Management';
 
@@ -24,14 +19,14 @@ class Project extends Resource
      *
      * @var string
      */
-    public static string $model = ProjectModel::class;
+    public static $model = TaskListModel::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -39,7 +34,7 @@ class Project extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'description'
+        'id', 'name'
     ];
 
     /**
@@ -48,23 +43,22 @@ class Project extends Resource
      * @param NovaRequest $request
      * @return array
      */
-    public function fields(NovaRequest $request): array
+    public function fields(NovaRequest $request)
     {
         return [
-            ID::make()->sortable()->showOnIndex(false),
+            ID::make()->sortable(),
 
-            BelongsTo::make('Owner', 'owner', 'App\Nova\User')
-                ->sortable(),
+            BelongsTo::make('Owner', 'owner', 'App\Nova\User'),
 
-            Text::make('Name')
-                ->required()
-                ->sortable(),
+            BelongsTo::make('Project'),
 
-            Trix::make('Description'),
+            Text::make('Name'),
 
-            HasMany::make('Members', 'members', 'App\Nova\ProjectMember'),
-
-            HasMany::make('Task Lists'),
+            Select::make('Status')->options([
+                0 => 'New',
+                1 => 'Completed',
+                2 => 'Archived'
+            ])->displayUsingLabels(),
         ];
     }
 
@@ -74,7 +68,7 @@ class Project extends Resource
      * @param NovaRequest $request
      * @return array
      */
-    public function cards(NovaRequest $request): array
+    public function cards(NovaRequest $request)
     {
         return [];
     }
@@ -85,7 +79,7 @@ class Project extends Resource
      * @param NovaRequest $request
      * @return array
      */
-    public function filters(NovaRequest $request): array
+    public function filters(NovaRequest $request)
     {
         return [];
     }
@@ -96,7 +90,7 @@ class Project extends Resource
      * @param NovaRequest $request
      * @return array
      */
-    public function lenses(NovaRequest $request): array
+    public function lenses(NovaRequest $request)
     {
         return [];
     }
@@ -107,7 +101,7 @@ class Project extends Resource
      * @param NovaRequest $request
      * @return array
      */
-    public function actions(NovaRequest $request): array
+    public function actions(NovaRequest $request)
     {
         return [];
     }
