@@ -4,6 +4,8 @@ namespace App\Nova;
 
 use App\Models\ProjectMember as ProjectMemberModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
@@ -59,6 +61,29 @@ class ProjectMember extends Resource
 
             BelongsTo::make('User'),
         ];
+    }
+
+    protected static function afterValidation(NovaRequest $request, $validator)
+    {
+        $user = $request->post('user');
+        $unique = Rule::unique('project_members', 'project_id')->where(
+            'user_id',
+            $user
+        );
+        if ($request->route('resourceId')) {
+            $unique->ignore($request->route('resourceId'));
+        }
+
+        $uniqueValidator = Validator::make($request->only('project'), [
+            'project' => [$unique],
+        ]);
+
+        if ($uniqueValidator->fails()) {
+            $validator
+                ->errors()
+                ->add('project', 'This project already has the chosen user.')
+                ->add('user', 'This project already has the chosen user.');
+        }
     }
 
     /**
