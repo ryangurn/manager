@@ -39,4 +39,12 @@ class Project extends Model
     {
         return $this->hasMany(ProjectMember::class, 'project_id', 'id');
     }
+
+    /**
+     * @return HasMany
+     */
+    public function taskLists(): HasMany
+    {
+        return $this->hasMany(TaskList::class, 'project_id', 'id');
+    }
 }
