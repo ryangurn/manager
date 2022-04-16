@@ -23,4 +23,9 @@ class TaskList extends Model
     {
         return $this->belongsTo(Project::class, 'project_id', 'id');
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'task_list_id', 'id');
+    }
 }
