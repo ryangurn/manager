@@ -2,16 +2,16 @@
 
 namespace App\Nova;
 
-use App\Models\TaskList as TaskListModel;
+use App\Models\Task as TaskModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class TaskList extends Resource
+class Task extends Resource
 {
     public static $group = 'Project Management';
 
@@ -20,14 +20,14 @@ class TaskList extends Resource
      *
      * @var string
      */
-    public static $model = TaskListModel::class;
+    public static $model = TaskModel::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -35,7 +35,7 @@ class TaskList extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name'
+        'id', 'name', 'description'
     ];
 
     /**
@@ -49,19 +49,21 @@ class TaskList extends Resource
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('Owner', 'owner', 'App\Nova\User'),
+            BelongsTo::make('Task List', 'taskList', 'App\Nova\TaskList'),
 
-            BelongsTo::make('Project'),
+            BelongsTo::make('Assignee', 'assignee', 'App\Nova\User')->nullable(),
 
-            Text::make('Name'),
+            Text::make('Name')->required(),
+
+            Trix::make('Description'),
 
             Select::make('Status')->options([
                 0 => 'New',
                 1 => 'Completed',
                 2 => 'Archived'
-            ])->displayUsingLabels(),
-
-            HasMany::make('Tasks'),
+            ])->default(function () {
+                return 0;
+            })->displayUsingLabels(),
         ];
     }
 
